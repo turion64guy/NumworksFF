@@ -1,0 +1,9 @@
+C:\Users\alexa\Documents\Visual Studio 2010\Projects\NumworksFF\NumworksFF\bin\Release\NumworksFF.exe
+C:\Users\alexa\Documents\Visual Studio 2010\Projects\NumworksFF\NumworksFF\bin\Release\NumworksFF.pdb
+C:\Users\alexa\Documents\Visual Studio 2010\Projects\NumworksFF\NumworksFF\bin\Release\NumworksFF.xml
+C:\Users\alexa\Documents\Visual Studio 2010\Projects\NumworksFF\NumworksFF\obj\x86\Release\NumworksFF.Form1.resources
+C:\Users\alexa\Documents\Visual Studio 2010\Projects\NumworksFF\NumworksFF\obj\x86\Release\NumworksFF.Resources.resources
+C:\Users\alexa\Documents\Visual Studio 2010\Projects\NumworksFF\NumworksFF\obj\x86\Release\NumworksFF.vbproj.GenerateResource.Cache
+C:\Users\alexa\Documents\Visual Studio 2010\Projects\NumworksFF\NumworksFF\obj\x86\Release\NumworksFF.exe
+C:\Users\alexa\Documents\Visual Studio 2010\Projects\NumworksFF\NumworksFF\obj\x86\Release\NumworksFF.xml
+C:\Users\alexa\Documents\Visual Studio 2010\Projects\NumworksFF\NumworksFF\obj\x86\Release\NumworksFF.pdb
