@@ -1,13 +1,28 @@
 ﻿Imports System.IO
 Public Class Form1
     Dim DfuutilExe As String
-    Dim NFFver As String = "0.1b"
+    Dim NFFver As String = "0.2b"
     Dim UserBinFile As String
     Dim TempPath As String
     Dim BinPath As String = "0"
     Dim DevicePresent As Boolean = False
     Dim DeviceMode As String
     Dim Aborted As Boolean
+
+    Delegate Sub DfuTextBoxWriteDelegate(ByVal text As String)
+    Delegate Sub ErrorWriteDelegate(ByVal text As String)
+    Delegate Sub EnableButtonsDelegate()
+
+    Public Sub EnableButtons()
+        flash_button.Enabled = True
+        SelectFile.Enabled = True
+        CheckDevice.Enabled = True
+        StatusWrite("Flash terminé")
+    End Sub
+
+    Public Sub DfuTextBoxWrite(ByVal text As String)
+        DfuUtilTextBox.AppendText(vbNewLine & text)
+    End Sub
 
     Sub StatusWrite(ByVal text As String)
         StaTextBox.AppendText(text & vbNewLine)
@@ -19,25 +34,25 @@ Public Class Form1
         StaTextBox.AppendText("-----------[ERR/DFU]---------" & vbNewLine & text & "---------------------------------------" & vbNewLine)
     End Sub
     Public Function ExecDfuutil()
-        Process1.StartInfo.FileName = DfuutilExe
-        Process1.StartInfo.WorkingDirectory = TempPath
-        Process1.StartInfo.Arguments = "-i 0 -a 0 -s 0x08000000:leave -D firmware.bin"
-        Process1.StartInfo.UseShellExecute = False
-        Process1.StartInfo.RedirectStandardOutput = True
-        Process1.StartInfo.RedirectStandardError = True
-        Process1.StartInfo.CreateNoWindow = False
-        Process1.StartInfo.WindowStyle = ProcessWindowStyle.Maximized
+        'Process1.StartInfo.FileName = DfuutilExe
+        'Process1.StartInfo.WorkingDirectory = TempPath
+        'Process1.StartInfo.Arguments = "-i 0 -a 0 -s 0x08000000:leave -D firmware.bin"
+        'Process1.StartInfo.UseShellExecute = False
+        'Process1.StartInfo.RedirectStandardOutput = True
+        'Process1.StartInfo.RedirectStandardError = True
+        'Process1.StartInfo.CreateNoWindow = False
+        'Process1.StartInfo.WindowStyle = ProcessWindowStyle.Minimized
 
 
-        Process1.Start()
+        'Process1.Start()
 
-        While Process1.Responding
-            DfuUtilTextBox.AppendText(vbNewLine & Process1.StandardOutput.ReadLine)
-            'StatusWrite(Process1.StandardError.ReadLine)
-        End While
-        ErrorWrite(Process1.StandardError.ReadToEnd)
-        Process1.WaitForExit()
-
+        'While Process1.Responding
+        '    'DfuUtilTextBox.AppendText(vbNewLine & Process1.StandardOutput.ReadLine)
+        '    DfuTextBoxWrite(Process1.StandardOutput.ReadLine)
+        '    'StatusWrite(Process1.StandardError.ReadLine)
+        'End While
+        'ErrorWrite(Process1.StandardError.ReadToEnd)
+        'Process1.WaitForExit()
         Return 1
     End Function
     Public Function TestForDev()
@@ -57,7 +72,8 @@ Public Class Form1
         DevicePresent = output.Contains("Flash")
         Label1.Text = DevicePresent
 
-        CalcStateLabel.Text = "Calculatrice non branchée ou reconnue"
+        CalcStateLabel.Text = "Calculatrice non branchée ou non reconnue"
+        DeviceModePictureBox.Image = My.Resources.numwork_no_con
         If DevicePresent Then
             StatusWrite("Calculatrice branchée")
         End If
@@ -65,8 +81,10 @@ Public Class Form1
             DeviceMode = "ramdisk"
             StatusWrite("Calculatrice allumée")
             CalcStateLabel.Text = "Calculatrice branchée et allumée"
+            DeviceModePictureBox.Image = My.Resources.numwork_ramdisk
         ElseIf output.Contains("@Internal Flash") Then
             StatusWrite("Calculatrice en mode DFU (écran éteint)")
+            DeviceModePictureBox.Image = My.Resources.numwork_dfu
             CalcStateLabel.Text = "Calculatrice en mode DFU (écran éteint)"
             DeviceMode = "DFU"
         End If
@@ -91,7 +109,7 @@ Public Class Form1
                     End If
                     isok = False
                 Case "DFU"
-                    If MessageBox.Show("Une fenêtre noire va apparaitre, veuillez ne pas la fermer, jusqu'a ce que votre calculatrice se rallume", "Info", MessageBoxButtons.OKCancel) = DialogResult.Cancel Then
+                    If MessageBox.Show("Une fenêtre noire va apparaitre, veuillez ne PAS la fermer jusqu'a ce que votre calculatrice se rallume" & vbNewLine & "Cliquez sur ok pour continuer", "Info", MessageBoxButtons.OKCancel) = DialogResult.Cancel Then
                         Aborted = True
                     End If
                     isok = True
@@ -123,10 +141,18 @@ Public Class Form1
         StatusWrite("Dossier temporaire : " & TempPath)
         Label1.Text = DfuutilExe
 
-        Using sCreateMSIFile As New FileStream(DfuutilExe, FileMode.Create)
-            sCreateMSIFile.Write(My.Resources.dfu_util, 0, My.Resources.dfu_util.Length)
-            StatusWrite("dfu-util.exe copié")
-        End Using
+        If System.Environment.Is64BitOperatingSystem Then
+            Using sCreateMSIFile As New FileStream(DfuutilExe, FileMode.Create)
+                sCreateMSIFile.Write(My.Resources.dfu_util, 0, My.Resources.dfu_util.Length)
+                StatusWrite("dfu-util.exe copié")
+            End Using
+        Else
+            Using sCreateMSIFile As New FileStream(DfuutilExe, FileMode.Create)
+                sCreateMSIFile.Write(My.Resources.dfu_util_win32, 0, My.Resources.dfu_util_win32.Length)
+                StatusWrite("dfu-util.exe [32bit] copié")
+                StatusWrite("Utilisation de dfu-util 0.8 32bit, peut poser soucis")
+            End Using
+        End If
         TestForDev()
 
     End Sub
@@ -141,8 +167,13 @@ Public Class Form1
                 End If
             End While
             If Not Aborted Then
-                ExecDfuutil()
+                'ExecDfuutil()
+                flash_button.Enabled = False
+                SelectFile.Enabled = False
+                CheckDevice.Enabled = False
                 StatusWrite("Démarrage du flash, veuillez patienter")
+                BGWflash.RunWorkerAsync()
+                'ExecDfuutil()
             End If
             Aborted = False
         End If
@@ -198,7 +229,33 @@ Public Class Form1
     End Sub
 
     Private Sub Clabel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Clabel.Click
-        MessageBox.Show("Version " & NFFver & vbNewLine & "VB Master Race :)" & vbNewLine & "Utilisant le logiciel libre dfu-util (v0.9)")
+        MessageBox.Show("Version " & NFFver & vbNewLine & "VB Master Race :)" & vbNewLine & "> http://turion64.fr.nf/nff/ <" & vbNewLine & "Utilisant le logiciel libre dfu-util")
     End Sub
 
+    Private Sub BGWflash_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BGWflash.DoWork
+        Dim DfuTextBoxWR As DfuTextBoxWriteDelegate = New DfuTextBoxWriteDelegate(AddressOf DfuTextBoxWrite)
+        Dim ErrorWR As ErrorWriteDelegate = New ErrorWriteDelegate(AddressOf ErrorWrite)
+        Dim ImDone As EnableButtonsDelegate = New EnableButtonsDelegate(AddressOf EnableButtons)
+        Process1.StartInfo.FileName = DfuutilExe
+        Process1.StartInfo.WorkingDirectory = TempPath
+        Process1.StartInfo.Arguments = "-i 0 -a 0 -s 0x08000000:leave -D firmware.bin"
+        Process1.StartInfo.UseShellExecute = False
+        Process1.StartInfo.RedirectStandardOutput = True
+        Process1.StartInfo.RedirectStandardError = True
+        Process1.StartInfo.CreateNoWindow = False
+        Process1.StartInfo.WindowStyle = ProcessWindowStyle.Minimized
+
+
+        Process1.Start()
+
+        While Process1.Responding
+            'DfuUtilTextBox.AppendText(vbNewLine & Process1.StandardOutput.ReadLine)
+            Me.Invoke(DfuTextBoxWR, Process1.StandardOutput.ReadLine)
+            'StatusWrite(Process1.StandardError.ReadLine)
+            Threading.Thread.Sleep(10)
+        End While
+        Me.Invoke(ErrorWR, Process1.StandardError.ReadToEnd)
+        Process1.WaitForExit()
+        Me.Invoke(ImDone)
+    End Sub
 End Class

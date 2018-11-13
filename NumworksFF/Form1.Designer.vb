@@ -24,7 +24,7 @@ Partial Class Form1
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
         Me.flash_button = New System.Windows.Forms.Button()
-        Me.BackgroundWorker1 = New System.ComponentModel.BackgroundWorker()
+        Me.BGWflash = New System.ComponentModel.BackgroundWorker()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.StaTextBox = New System.Windows.Forms.TextBox()
         Me.Process1 = New System.Diagnostics.Process()
@@ -39,22 +39,31 @@ Partial Class Form1
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.ClearTemp = New System.Windows.Forms.CheckBox()
         Me.FwNameLabel = New System.Windows.Forms.Label()
+        Me.DeviceModePictureBox = New System.Windows.Forms.PictureBox()
+        Me.Panel1 = New System.Windows.Forms.Panel()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DeviceModePictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Panel1.SuspendLayout()
         Me.SuspendLayout()
         '
         'flash_button
         '
-        Me.flash_button.Location = New System.Drawing.Point(180, 130)
+        Me.flash_button.Location = New System.Drawing.Point(180, 144)
         Me.flash_button.Name = "flash_button"
         Me.flash_button.Size = New System.Drawing.Size(135, 23)
         Me.flash_button.TabIndex = 2
         Me.flash_button.Text = "Flasher"
         Me.flash_button.UseVisualStyleBackColor = True
         '
+        'BGWflash
+        '
+        Me.BGWflash.WorkerReportsProgress = True
+        Me.BGWflash.WorkerSupportsCancellation = True
+        '
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(12, 360)
+        Me.Label1.Location = New System.Drawing.Point(12, 376)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(39, 13)
         Me.Label1.TabIndex = 1
@@ -62,7 +71,7 @@ Partial Class Form1
         '
         'StaTextBox
         '
-        Me.StaTextBox.Location = New System.Drawing.Point(12, 159)
+        Me.StaTextBox.Location = New System.Drawing.Point(12, 173)
         Me.StaTextBox.Multiline = True
         Me.StaTextBox.Name = "StaTextBox"
         Me.StaTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
@@ -87,7 +96,7 @@ Partial Class Form1
         '
         'SelectFile
         '
-        Me.SelectFile.Location = New System.Drawing.Point(12, 130)
+        Me.SelectFile.Location = New System.Drawing.Point(12, 144)
         Me.SelectFile.Name = "SelectFile"
         Me.SelectFile.Size = New System.Drawing.Size(135, 23)
         Me.SelectFile.TabIndex = 1
@@ -98,7 +107,7 @@ Partial Class Form1
         '
         Me.labelName.AutoSize = True
         Me.labelName.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.labelName.Location = New System.Drawing.Point(95, 9)
+        Me.labelName.Location = New System.Drawing.Point(95, 4)
         Me.labelName.Name = "labelName"
         Me.labelName.Size = New System.Drawing.Size(252, 24)
         Me.labelName.TabIndex = 4
@@ -107,7 +116,7 @@ Partial Class Form1
         'Clabel
         '
         Me.Clabel.AutoSize = True
-        Me.Clabel.Location = New System.Drawing.Point(12, 337)
+        Me.Clabel.Location = New System.Drawing.Point(12, 351)
         Me.Clabel.Name = "Clabel"
         Me.Clabel.Size = New System.Drawing.Size(113, 13)
         Me.Clabel.TabIndex = 4
@@ -115,7 +124,7 @@ Partial Class Form1
         '
         'DfuUtilTextBox
         '
-        Me.DfuUtilTextBox.Location = New System.Drawing.Point(12, 299)
+        Me.DfuUtilTextBox.Location = New System.Drawing.Point(12, 313)
         Me.DfuUtilTextBox.Multiline = True
         Me.DfuUtilTextBox.Name = "DfuUtilTextBox"
         Me.DfuUtilTextBox.ReadOnly = True
@@ -125,7 +134,7 @@ Partial Class Form1
         '
         'CheckDevice
         '
-        Me.CheckDevice.Location = New System.Drawing.Point(347, 130)
+        Me.CheckDevice.Location = New System.Drawing.Point(347, 144)
         Me.CheckDevice.Name = "CheckDevice"
         Me.CheckDevice.Size = New System.Drawing.Size(135, 23)
         Me.CheckDevice.TabIndex = 3
@@ -146,7 +155,7 @@ Partial Class Form1
         'CalcStateLabel
         '
         Me.CalcStateLabel.AutoSize = True
-        Me.CalcStateLabel.Location = New System.Drawing.Point(14, 114)
+        Me.CalcStateLabel.Location = New System.Drawing.Point(83, 56)
         Me.CalcStateLabel.Name = "CalcStateLabel"
         Me.CalcStateLabel.Size = New System.Drawing.Size(88, 13)
         Me.CalcStateLabel.TabIndex = 9
@@ -165,7 +174,7 @@ Partial Class Form1
         'ClearTemp
         '
         Me.ClearTemp.AutoSize = True
-        Me.ClearTemp.Location = New System.Drawing.Point(268, 335)
+        Me.ClearTemp.Location = New System.Drawing.Point(268, 349)
         Me.ClearTemp.Name = "ClearTemp"
         Me.ClearTemp.Size = New System.Drawing.Size(214, 17)
         Me.ClearTemp.TabIndex = 6
@@ -175,20 +184,42 @@ Partial Class Form1
         'FwNameLabel
         '
         Me.FwNameLabel.AutoSize = True
-        Me.FwNameLabel.Location = New System.Drawing.Point(14, 80)
+        Me.FwNameLabel.Location = New System.Drawing.Point(30, 124)
         Me.FwNameLabel.Name = "FwNameLabel"
-        Me.FwNameLabel.Size = New System.Drawing.Size(0, 13)
+        Me.FwNameLabel.Size = New System.Drawing.Size(25, 13)
         Me.FwNameLabel.TabIndex = 12
+        Me.FwNameLabel.Text = "      "
+        '
+        'DeviceModePictureBox
+        '
+        Me.DeviceModePictureBox.ErrorImage = Nothing
+        Me.DeviceModePictureBox.Image = Global.NumworksFF.My.Resources.Resources.numwork_base
+        Me.DeviceModePictureBox.InitialImage = Global.NumworksFF.My.Resources.Resources.numwork_base
+        Me.DeviceModePictureBox.Location = New System.Drawing.Point(8, 11)
+        Me.DeviceModePictureBox.Name = "DeviceModePictureBox"
+        Me.DeviceModePictureBox.Size = New System.Drawing.Size(69, 69)
+        Me.DeviceModePictureBox.TabIndex = 13
+        Me.DeviceModePictureBox.TabStop = False
+        '
+        'Panel1
+        '
+        Me.Panel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
+        Me.Panel1.Controls.Add(Me.DeviceModePictureBox)
+        Me.Panel1.Controls.Add(Me.CalcStateLabel)
+        Me.Panel1.Location = New System.Drawing.Point(12, 34)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(312, 83)
+        Me.Panel1.TabIndex = 14
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(494, 357)
+        Me.ClientSize = New System.Drawing.Size(494, 370)
+        Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.FwNameLabel)
         Me.Controls.Add(Me.ClearTemp)
         Me.Controls.Add(Me.PictureBox1)
-        Me.Controls.Add(Me.CalcStateLabel)
         Me.Controls.Add(Me.UserMsgLabel)
         Me.Controls.Add(Me.CheckDevice)
         Me.Controls.Add(Me.DfuUtilTextBox)
@@ -203,12 +234,15 @@ Partial Class Form1
         Me.Name = "Form1"
         Me.Text = "Numwoks Firmware Flasher"
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DeviceModePictureBox, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
     Friend WithEvents flash_button As System.Windows.Forms.Button
-    Friend WithEvents BackgroundWorker1 As System.ComponentModel.BackgroundWorker
+    Friend WithEvents BGWflash As System.ComponentModel.BackgroundWorker
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents StaTextBox As System.Windows.Forms.TextBox
     Friend WithEvents Process1 As System.Diagnostics.Process
@@ -223,5 +257,7 @@ Partial Class Form1
     Friend WithEvents PictureBox1 As System.Windows.Forms.PictureBox
     Friend WithEvents ClearTemp As System.Windows.Forms.CheckBox
     Friend WithEvents FwNameLabel As System.Windows.Forms.Label
+    Friend WithEvents DeviceModePictureBox As System.Windows.Forms.PictureBox
+    Friend WithEvents Panel1 As System.Windows.Forms.Panel
 
 End Class

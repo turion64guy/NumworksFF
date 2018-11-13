@@ -71,6 +71,56 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Recherche une ressource localisée de type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property dfu_util_win32() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("dfu_util_win32", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Recherche une ressource localisée de type System.Drawing.Bitmap.
+        '''</summary>
+        Public ReadOnly Property numwork_base() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("numwork_base", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Recherche une ressource localisée de type System.Drawing.Bitmap.
+        '''</summary>
+        Public ReadOnly Property numwork_dfu() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("numwork_dfu", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Recherche une ressource localisée de type System.Drawing.Bitmap.
+        '''</summary>
+        Public ReadOnly Property numwork_no_con() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("numwork_no_con", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Recherche une ressource localisée de type System.Drawing.Bitmap.
+        '''</summary>
+        Public ReadOnly Property numwork_ramdisk() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("numwork_ramdisk", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
         '''</summary>
         Public ReadOnly Property numworksfirmwareflasher_logo() As System.Drawing.Icon

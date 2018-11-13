@@ -166,8 +166,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="numworksfirmwareflasher logo.ico" />
-    <None Include="Resources\numworks-driver-win32.msi" />
-    <None Include="Resources\numworks-driver-win64.msi" />
+    <None Include="Resources\numwork_no_con.png" />
+    <None Include="Resources\numwork_ramdisk.png" />
+    <None Include="Resources\numwork_dfu.png" />
+    <None Include="Resources\numwork_base.png" />
+    <None Include="Resources\dfu-util-win32.exe" />
     <None Include="Resources\numworksfirmwareflasher logo.bmp" />
     <None Include="Resources\numworksfirmwareflasher logo.ico" />
   </ItemGroup>

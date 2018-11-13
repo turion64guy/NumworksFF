@@ -121,10 +121,25 @@
   <data name="dfu_util" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dfu-util.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="dfu_util_win32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\dfu-util-win32.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="numworksfirmwareflasher_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\numworksfirmwareflasher logo.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="numworksfirmwareflasher_logo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\numworksfirmwareflasher logo.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="numwork_base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\numwork_base.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="numwork_dfu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\numwork_dfu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="numwork_no_con" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\numwork_no_con.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="numwork_ramdisk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\numwork_ramdisk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

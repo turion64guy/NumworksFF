@@ -19,6 +19,26 @@ NumworksFF
 	<summary>
   Recherche une ressource localisée de type System.Byte[].
 </summary>
+</member><member name="P:NumworksFF.My.Resources.Resources.dfu_util_win32">
+	<summary>
+  Recherche une ressource localisée de type System.Byte[].
+</summary>
+</member><member name="P:NumworksFF.My.Resources.Resources.numwork_base">
+	<summary>
+  Recherche une ressource localisée de type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:NumworksFF.My.Resources.Resources.numwork_dfu">
+	<summary>
+  Recherche une ressource localisée de type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:NumworksFF.My.Resources.Resources.numwork_no_con">
+	<summary>
+  Recherche une ressource localisée de type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:NumworksFF.My.Resources.Resources.numwork_ramdisk">
+	<summary>
+  Recherche une ressource localisée de type System.Drawing.Bitmap.
+</summary>
 </member><member name="P:NumworksFF.My.Resources.Resources.numworksfirmwareflasher_logo">
 	<summary>
   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
