@@ -1,13 +1,15 @@
 ﻿Imports System.IO
 Public Class Form1
     Dim DfuutilExe As String
-    Dim NFFver As String = "0.2b"
+    Dim NFFver As String = "0.3b"
     Dim UserBinFile As String
     Dim TempPath As String
     Dim BinPath As String = "0"
     Dim DevicePresent As Boolean = False
     Dim DeviceMode As String
     Dim Aborted As Boolean
+    Dim DriverMsi As String
+    Dim DriverWasInstalled As Boolean = False 'For future use...maybe
 
     Delegate Sub DfuTextBoxWriteDelegate(ByVal text As String)
     Delegate Sub ErrorWriteDelegate(ByVal text As String)
@@ -17,7 +19,15 @@ Public Class Form1
         flash_button.Enabled = True
         SelectFile.Enabled = True
         CheckDevice.Enabled = True
+        DriverInstallButton.Enabled = True
+        Me.TopMost = False
         StatusWrite("Flash terminé")
+        TestForDev()
+    End Sub
+    Public Sub DriverInstallEnd()
+        'DriverInstallButton.Enabled = False
+        DriverWasInstalled = True
+        StatusWrite("Driver installé")
     End Sub
 
     Public Sub DfuTextBoxWrite(ByVal text As String)
@@ -55,6 +65,10 @@ Public Class Form1
         'Process1.WaitForExit()
         Return 1
     End Function
+    Public Function DriverInstall()
+        BGWdriverInstall.RunWorkerAsync()
+        DriverInstallEnd()
+    End Function
     Public Function TestForDev()
         Dim output As String
         Process1.StartInfo.FileName = DfuutilExe
@@ -75,8 +89,14 @@ Public Class Form1
         CalcStateLabel.Text = "Calculatrice non branchée ou non reconnue"
         DeviceModePictureBox.Image = My.Resources.numwork_no_con
         If DevicePresent Then
+            DriverInstallButton.Enabled = False
             StatusWrite("Calculatrice branchée")
+        Else
+            CalcStateLabel.Text = "Calculatrice non branchée ou non reconnue"
+            DeviceModePictureBox.Image = My.Resources.numwork_no_con
+            DriverInstallButton.Enabled = True
         End If
+
         If output.Contains("@Flash") Then
             DeviceMode = "ramdisk"
             StatusWrite("Calculatrice allumée")
@@ -126,7 +146,7 @@ Public Class Form1
         TempPath = My.Computer.FileSystem.SpecialDirectories.Temp & "\NumworksFF\"
         DfuutilExe = TempPath & "dfu-util.exe"
         OpenFileDialogBin.Filter = "Fichier Firware (.bin) |*.bin"
-        Me.TopMost = True
+        Me.TopMost = False
         If System.Environment.Is64BitOperatingSystem Then
             StatusWrite("Windows 64bits")
         Else
@@ -167,18 +187,40 @@ Public Class Form1
                 End If
             End While
             If Not Aborted Then
+                Me.TopMost = True
                 'ExecDfuutil()
                 flash_button.Enabled = False
                 SelectFile.Enabled = False
                 CheckDevice.Enabled = False
+                DriverInstallButton.Enabled = False
                 StatusWrite("Démarrage du flash, veuillez patienter")
+                DeviceModePictureBox.Image = My.Resources.numwork_flash
                 BGWflash.RunWorkerAsync()
                 'ExecDfuutil()
             End If
             Aborted = False
         End If
-        'StatusWrite("loli")
-        'StatusWrite("loli2")
+    End Sub
+    Private Sub DriverInstall_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DriverInstallButton.Click
+        If System.Environment.OSVersion.Version.Major = 5 And System.Environment.OSVersion.Version.Minor = 1 Then
+            MessageBox.Show("Ce driver est incompatible avec Windows XP, pas de chance..." & vbNewLine & ">Vous pouvez installer le driver WinUSB avec Zadig", "Information")
+        Else
+
+            If System.Environment.Is64BitOperatingSystem Then
+                DriverMsi = TempPath & "numworks-driver-win64.msi"
+                Using sCreateMSIFile As New FileStream(DriverMsi, FileMode.Create)
+                    sCreateMSIFile.Write(My.Resources.numworks_driver_win64, 0, My.Resources.numworks_driver_win64.Length)
+                    StatusWrite("Driver pour Windows 64bits copié")
+                End Using
+            Else
+                DriverMsi = TempPath & "numworks-driver-win32.msi"
+                Using sCreateMSIFile As New FileStream(DriverMsi, FileMode.Create)
+                    sCreateMSIFile.Write(My.Resources.numworks_driver_win32, 0, My.Resources.numworks_driver_win32.Length)
+                    StatusWrite("Driver pour Windows 32bits copié")
+                End Using
+            End If
+            DriverInstall()
+        End If
     End Sub
 
     Private Sub SelectFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectFile.Click
@@ -222,10 +264,14 @@ Public Class Form1
             If System.IO.File.Exists(DfuutilExe) Then
                 System.IO.File.Delete(DfuutilExe)
             End If
+            If System.IO.File.Exists(DriverMsi) Then
+                System.IO.File.Delete(DriverMsi)
+            End If
             If System.IO.Directory.Exists(TempPath) Then
                 System.IO.Directory.Delete(TempPath)
             End If
         End If
+        BGWdriverInstall.CancelAsync()
     End Sub
 
     Private Sub Clabel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Clabel.Click
@@ -257,5 +303,32 @@ Public Class Form1
         Me.Invoke(ErrorWR, Process1.StandardError.ReadToEnd)
         Process1.WaitForExit()
         Me.Invoke(ImDone)
+    End Sub
+
+    Private Sub BGWdriverInstall_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BGWdriverInstall.DoWork
+
+        Dim drivername As String
+
+        If System.Environment.Is64BitOperatingSystem Then
+            'drivername = TempPath & "numworks-driver-win64.msi"
+            drivername = "numworks-driver-win64.msi"
+        Else
+            'drivername = TempPath & "numworks-driver-win32.msi"
+            drivername = "numworks-driver-win32.msi"
+        End If
+        Process1.StartInfo.FileName = "msiexec.exe"
+        Process1.StartInfo.WorkingDirectory = TempPath
+        Process1.StartInfo.Arguments = "/package " & drivername & " /passive"
+        'MessageBox.Show(Process1.StartInfo.FileName & Process1.StartInfo.Arguments)
+        Process1.StartInfo.UseShellExecute = False
+        'Process1.StartInfo.RedirectStandardOutput = True
+        'Process1.StartInfo.RedirectStandardError = True
+        Process1.StartInfo.CreateNoWindow = False
+        'Process1.StartInfo.WindowStyle = ProcessWindowStyle.Minimized
+
+        Process1.Start()
+        While Process1.Responding
+
+        End While
     End Sub
 End Class

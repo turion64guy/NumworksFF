@@ -103,6 +103,16 @@ Namespace My.Resources
         '''<summary>
         '''  Recherche une ressource localisée de type System.Drawing.Bitmap.
         '''</summary>
+        Public ReadOnly Property numwork_flash() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("numwork_flash", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Recherche une ressource localisée de type System.Drawing.Bitmap.
+        '''</summary>
         Public ReadOnly Property numwork_no_con() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("numwork_no_con", resourceCulture)
@@ -117,6 +127,26 @@ Namespace My.Resources
             Get
                 Dim obj As Object = ResourceManager.GetObject("numwork_ramdisk", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Recherche une ressource localisée de type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property numworks_driver_win32() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("numworks_driver_win32", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Recherche une ressource localisée de type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property numworks_driver_win64() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("numworks_driver_win64", resourceCulture)
+                Return CType(obj,Byte())
             End Get
         End Property
         

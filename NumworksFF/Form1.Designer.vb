@@ -41,6 +41,8 @@ Partial Class Form1
         Me.FwNameLabel = New System.Windows.Forms.Label()
         Me.DeviceModePictureBox = New System.Windows.Forms.PictureBox()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.DriverInstallButton = New System.Windows.Forms.Button()
+        Me.BGWdriverInstall = New System.ComponentModel.BackgroundWorker()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DeviceModePictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel1.SuspendLayout()
@@ -211,11 +213,26 @@ Partial Class Form1
         Me.Panel1.Size = New System.Drawing.Size(312, 83)
         Me.Panel1.TabIndex = 14
         '
+        'DriverInstallButton
+        '
+        Me.DriverInstallButton.Location = New System.Drawing.Point(176, 348)
+        Me.DriverInstallButton.Name = "DriverInstallButton"
+        Me.DriverInstallButton.Size = New System.Drawing.Size(84, 19)
+        Me.DriverInstallButton.TabIndex = 5
+        Me.DriverInstallButton.Text = "Installer driver"
+        Me.DriverInstallButton.UseVisualStyleBackColor = True
+        '
+        'BGWdriverInstall
+        '
+        Me.BGWdriverInstall.WorkerReportsProgress = True
+        Me.BGWdriverInstall.WorkerSupportsCancellation = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(494, 370)
+        Me.Controls.Add(Me.DriverInstallButton)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.FwNameLabel)
         Me.Controls.Add(Me.ClearTemp)
@@ -259,5 +276,7 @@ Partial Class Form1
     Friend WithEvents FwNameLabel As System.Windows.Forms.Label
     Friend WithEvents DeviceModePictureBox As System.Windows.Forms.PictureBox
     Friend WithEvents Panel1 As System.Windows.Forms.Panel
+    Friend WithEvents DriverInstallButton As System.Windows.Forms.Button
+    Friend WithEvents BGWdriverInstall As System.ComponentModel.BackgroundWorker
 
 End Class

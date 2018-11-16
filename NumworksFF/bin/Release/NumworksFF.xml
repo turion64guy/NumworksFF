@@ -31,6 +31,10 @@ NumworksFF
 	<summary>
   Recherche une ressource localisée de type System.Drawing.Bitmap.
 </summary>
+</member><member name="P:NumworksFF.My.Resources.Resources.numwork_flash">
+	<summary>
+  Recherche une ressource localisée de type System.Drawing.Bitmap.
+</summary>
 </member><member name="P:NumworksFF.My.Resources.Resources.numwork_no_con">
 	<summary>
   Recherche une ressource localisée de type System.Drawing.Bitmap.
@@ -38,6 +42,14 @@ NumworksFF
 </member><member name="P:NumworksFF.My.Resources.Resources.numwork_ramdisk">
 	<summary>
   Recherche une ressource localisée de type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:NumworksFF.My.Resources.Resources.numworks_driver_win32">
+	<summary>
+  Recherche une ressource localisée de type System.Byte[].
+</summary>
+</member><member name="P:NumworksFF.My.Resources.Resources.numworks_driver_win64">
+	<summary>
+  Recherche une ressource localisée de type System.Byte[].
 </summary>
 </member><member name="P:NumworksFF.My.Resources.Resources.numworksfirmwareflasher_logo">
 	<summary>
