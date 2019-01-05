@@ -43,6 +43,9 @@ Partial Class Form1
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.DriverInstallButton = New System.Windows.Forms.Button()
         Me.BGWdriverInstall = New System.ComponentModel.BackgroundWorker()
+        Me.UpdateInfoLabel = New System.Windows.Forms.LinkLabel()
+        Me.BGWupdateCheck = New System.ComponentModel.BackgroundWorker()
+        Me.CheckUpdateButton = New System.Windows.Forms.Button()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DeviceModePictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel1.SuspendLayout()
@@ -118,7 +121,7 @@ Partial Class Form1
         'Clabel
         '
         Me.Clabel.AutoSize = True
-        Me.Clabel.Location = New System.Drawing.Point(12, 351)
+        Me.Clabel.Location = New System.Drawing.Point(10, 351)
         Me.Clabel.Name = "Clabel"
         Me.Clabel.Size = New System.Drawing.Size(113, 13)
         Me.Clabel.TabIndex = 4
@@ -176,7 +179,7 @@ Partial Class Form1
         'ClearTemp
         '
         Me.ClearTemp.AutoSize = True
-        Me.ClearTemp.Location = New System.Drawing.Point(268, 349)
+        Me.ClearTemp.Location = New System.Drawing.Point(276, 349)
         Me.ClearTemp.Name = "ClearTemp"
         Me.ClearTemp.Size = New System.Drawing.Size(214, 17)
         Me.ClearTemp.TabIndex = 6
@@ -215,9 +218,9 @@ Partial Class Form1
         '
         'DriverInstallButton
         '
-        Me.DriverInstallButton.Location = New System.Drawing.Point(176, 348)
+        Me.DriverInstallButton.Location = New System.Drawing.Point(187, 348)
         Me.DriverInstallButton.Name = "DriverInstallButton"
-        Me.DriverInstallButton.Size = New System.Drawing.Size(84, 19)
+        Me.DriverInstallButton.Size = New System.Drawing.Size(87, 19)
         Me.DriverInstallButton.TabIndex = 5
         Me.DriverInstallButton.Text = "Installer driver"
         Me.DriverInstallButton.UseVisualStyleBackColor = True
@@ -227,11 +230,36 @@ Partial Class Form1
         Me.BGWdriverInstall.WorkerReportsProgress = True
         Me.BGWdriverInstall.WorkerSupportsCancellation = True
         '
+        'UpdateInfoLabel
+        '
+        Me.UpdateInfoLabel.AutoSize = True
+        Me.UpdateInfoLabel.Location = New System.Drawing.Point(347, 103)
+        Me.UpdateInfoLabel.Name = "UpdateInfoLabel"
+        Me.UpdateInfoLabel.Size = New System.Drawing.Size(0, 13)
+        Me.UpdateInfoLabel.TabIndex = 15
+        '
+        'BGWupdateCheck
+        '
+        '
+        'CheckUpdateButton
+        '
+        Me.CheckUpdateButton.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.CheckUpdateButton.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CheckUpdateButton.Location = New System.Drawing.Point(390, 80)
+        Me.CheckUpdateButton.Margin = New System.Windows.Forms.Padding(2)
+        Me.CheckUpdateButton.Name = "CheckUpdateButton"
+        Me.CheckUpdateButton.Size = New System.Drawing.Size(92, 23)
+        Me.CheckUpdateButton.TabIndex = 16
+        Me.CheckUpdateButton.Text = "Verif. mise à jour"
+        Me.CheckUpdateButton.UseVisualStyleBackColor = False
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(494, 370)
+        Me.Controls.Add(Me.CheckUpdateButton)
+        Me.Controls.Add(Me.UpdateInfoLabel)
         Me.Controls.Add(Me.DriverInstallButton)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.FwNameLabel)
@@ -249,7 +277,7 @@ Partial Class Form1
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Form1"
-        Me.Text = "Numwoks Firmware Flasher"
+        Me.Text = "Numworks Firmware Flasher"
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DeviceModePictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel1.ResumeLayout(False)
@@ -278,5 +306,8 @@ Partial Class Form1
     Friend WithEvents Panel1 As System.Windows.Forms.Panel
     Friend WithEvents DriverInstallButton As System.Windows.Forms.Button
     Friend WithEvents BGWdriverInstall As System.ComponentModel.BackgroundWorker
+    Friend WithEvents UpdateInfoLabel As System.Windows.Forms.LinkLabel
+    Friend WithEvents BGWupdateCheck As System.ComponentModel.BackgroundWorker
+    Friend WithEvents CheckUpdateButton As System.Windows.Forms.Button
 
 End Class

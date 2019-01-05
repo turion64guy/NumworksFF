@@ -63,6 +63,16 @@ Namespace My.Resources
         '''<summary>
         '''  Recherche une ressource localisée de type System.Byte[].
         '''</summary>
+        Public ReadOnly Property arm_none_eabi_objcopy() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("arm_none_eabi_objcopy", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Recherche une ressource localisée de type System.Byte[].
+        '''</summary>
         Public ReadOnly Property dfu_util() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("dfu_util", resourceCulture)

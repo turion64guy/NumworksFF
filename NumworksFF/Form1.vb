@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Public Class Form1
     Dim DfuutilExe As String
-    Dim NFFver As String = "0.3b"
+    Dim NFFver As String = "0.4.0b"
     Dim UserBinFile As String
     Dim TempPath As String
     Dim BinPath As String = "0"
@@ -14,12 +14,29 @@ Public Class Form1
     Delegate Sub DfuTextBoxWriteDelegate(ByVal text As String)
     Delegate Sub ErrorWriteDelegate(ByVal text As String)
     Delegate Sub EnableButtonsDelegate()
+    Delegate Sub WriteUpdateLabelDelegate(ByVal text As String, ByVal noUpdate As Boolean, ByVal rError As String)
 
+    Public Sub WriteUpdateLabel(ByVal text As String, ByVal noUpdate As Boolean, ByVal rError As String)
+        If Not rError = vbNullString Then
+            UpdateInfoLabel.Text = rError
+            UpdateInfoLabel.Enabled = False
+        Else
+            If noUpdate Then
+                UpdateInfoLabel.Text = "Pas de mise à jour"
+                UpdateInfoLabel.Enabled = False
+            Else
+                UpdateInfoLabel.Enabled = True
+                UpdateInfoLabel.Text = "Nouvelle version (" & text & ")" & vbNewLine & "http://turion64.fr.nf/nff"
+                CheckUpdateButton.Hide()
+            End If
+        End If
+    End Sub
     Public Sub EnableButtons()
         flash_button.Enabled = True
         SelectFile.Enabled = True
         CheckDevice.Enabled = True
         DriverInstallButton.Enabled = True
+        CheckUpdateButton.Enabled = True
         Me.TopMost = False
         StatusWrite("Flash terminé")
         TestForDev()
@@ -29,7 +46,37 @@ Public Class Form1
         DriverWasInstalled = True
         StatusWrite("Driver installé")
     End Sub
+    Public Sub elf2bin()
+        SelectFile.Enabled = False
+        flash_button.Enabled = False
+        Dim objcopyExe As String
+        objcopyExe = TempPath & "objcopy.exe" 'Copying arm' "objcopy" to convert elf to bin
+        Using sCreateMSIFile As New FileStream(objcopyExe, FileMode.Create)
+            sCreateMSIFile.Write(My.Resources.arm_none_eabi_objcopy, 0, My.Resources.arm_none_eabi_objcopy.Length)
+            StatusWrite("objcopy.exe copié")
+        End Using
+        My.Computer.FileSystem.MoveFile(TempPath & "firmware.bin", TempPath & "temp.elf")
+        Process1.StartInfo.FileName = objcopyExe
+        Process1.StartInfo.WorkingDirectory = TempPath
+        Process1.StartInfo.Arguments = "-O binary temp.elf firmware.bin"
+        Process1.StartInfo.UseShellExecute = False
+        Process1.StartInfo.CreateNoWindow = False
 
+        Process1.Start()
+        While Process1.Responding
+
+        End While
+        If Not System.IO.File.Exists(TempPath & "firmware.bin") Then
+            StatusWrite("ERREUR DE CONVERSION")
+            FwNameLabel.Text = "Firmware séléctionné : " & "aucun"
+            UserBinFile = vbNullString
+        Else
+            StatusWrite("Conversion terminé")
+        End If
+        My.Computer.FileSystem.DeleteFile(TempPath & "temp.elf")
+        flash_button.Enabled = True
+        SelectFile.Enabled = True
+    End Sub
     Public Sub DfuTextBoxWrite(ByVal text As String)
         DfuUtilTextBox.AppendText(vbNewLine & text)
     End Sub
@@ -141,7 +188,7 @@ Public Class Form1
 
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         StatusWrite("#### Numworks Firmware Flasher v" & NFFver)
-        Clabel.Text = "v" & NFFver & " par Turion 64 Guy // 2018"
+        Clabel.Text = "v" & NFFver & " par Turion 64 Guy // 2018-9"
         StaTextBox.ReadOnly = True
         TempPath = My.Computer.FileSystem.SpecialDirectories.Temp & "\NumworksFF\"
         DfuutilExe = TempPath & "dfu-util.exe"
@@ -175,6 +222,8 @@ Public Class Form1
         End If
         TestForDev()
 
+
+
     End Sub
 
     Private Sub flash_button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles flash_button.Click
@@ -193,6 +242,7 @@ Public Class Form1
                 SelectFile.Enabled = False
                 CheckDevice.Enabled = False
                 DriverInstallButton.Enabled = False
+                CheckUpdateButton.Enabled = False
                 StatusWrite("Démarrage du flash, veuillez patienter")
                 DeviceModePictureBox.Image = My.Resources.numwork_flash
                 BGWflash.RunWorkerAsync()
@@ -225,7 +275,7 @@ Public Class Form1
 
     Private Sub SelectFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectFile.Click
         OpenFileDialogBin.Reset()
-        OpenFileDialogBin.Filter = "Fichier Firmware (.bin) |*.bin"
+        OpenFileDialogBin.Filter = "Fichier Firmware|*.bin;*.elf|Fichier Firmware Binaire|*.bin|Fichier Firmware ELF|*.elf"
         'UserBinFile = "OpenFileDialog1"
         OpenFileDialogBin.ShowDialog()
         UserBinFile = OpenFileDialogBin.FileName
@@ -246,6 +296,19 @@ Public Class Form1
                 StatusWrite("copié !")
                 FwNameLabel.Text = "Firmware séléctionné : " & UserBinFile
             End If
+            'Detecting if the firmware is a "ready-to-flash"binary or a .elf file, elf files start with special-character+"ELF" and have to be converted to be flashed.
+            Dim ofile As System.IO.FileInfo
+            Dim buffer() As Byte = New Byte(3) {} 'buffer size (4) -1
+            ofile = New System.IO.FileInfo(BinPath)
+            Dim ofilestream As System.IO.FileStream = ofile.Open(IO.FileMode.Open, IO.FileAccess.Read)
+            ofilestream.Read(buffer, 0, buffer.Length)
+            ofilestream.Close()
+            If System.Text.Encoding.ASCII.GetString(buffer).Contains("ELF") Then
+                StatusWrite("Fichier ELF detecté, conversion...")
+                elf2bin()
+            Else
+                StatusWrite("Fichier BIN detecté")
+            End If
         End If
     End Sub
 
@@ -255,21 +318,32 @@ Public Class Form1
 
         End If
     End Sub
+    Private Sub UpdateInfoLabel_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles UpdateInfoLabel.LinkClicked
+        System.Diagnostics.Process.Start("http://turion64.fr.nf/nff/")
+    End Sub
+
+    Private Sub CheckUpdateButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CheckUpdateButton.Click
+        If Not BGWupdateCheck.IsBusy Then
+            BGWupdateCheck.RunWorkerAsync()
+        End If
+    End Sub
     Private Sub Form1_Closing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
         BinPath = TempPath & "firmware.bin"
         If System.IO.File.Exists(BinPath) Then
             System.IO.File.Delete(BinPath)
         End If
         If ClearTemp.Checked Then
-            If System.IO.File.Exists(DfuutilExe) Then
-                System.IO.File.Delete(DfuutilExe)
-            End If
-            If System.IO.File.Exists(DriverMsi) Then
-                System.IO.File.Delete(DriverMsi)
-            End If
-            If System.IO.Directory.Exists(TempPath) Then
-                System.IO.Directory.Delete(TempPath)
-            End If
+            'If System.IO.File.Exists(DfuutilExe) Then
+            '   System.IO.File.Delete(DfuutilExe)
+            'End If
+            'If System.IO.File.Exists(DriverMsi) Then
+            'System.IO.File.Delete(DriverMsi)
+            'End If
+            ' If System.IO.Directory.Exists(TempPath) Then
+            'System.IO.Directory.Delete(TempPath)
+            'End If
+
+            My.Computer.FileSystem.DeleteDirectory(TempPath, FileIO.DeleteDirectoryOption.DeleteAllContents)
         End If
         BGWdriverInstall.CancelAsync()
     End Sub
@@ -330,5 +404,48 @@ Public Class Form1
         While Process1.Responding
 
         End While
+    End Sub
+
+    Private Sub BGWupdateCheck_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BGWupdateCheck.DoWork
+        Dim SiteVer As String
+        Dim url As String = "http://turion64.fr.nf/projets/NumworksFF/verinfo/latest.ver"
+        'Dim urlIP As String = "88.170.73.166"
+        Dim IsUpdate As WriteUpdateLabelDelegate = New WriteUpdateLabelDelegate(AddressOf WriteUpdateLabel)
+        'Dim DfuTextBoxWR As DfuTextBoxWriteDelegate = New DfuTextBoxWriteDelegate(AddressOf DfuTextBoxWrite)
+        'Dim SiteProbeRequest As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create(url)
+        'Dim SiteProbeResponse As System.Net.HttpWebResponse = SiteProbeRequest.GetResponse()
+        Dim errorOccured As Boolean
+
+        If System.IO.File.Exists(TempPath & "latest.ver") Then
+            System.IO.File.Delete(TempPath & "latest.ver")
+        End If
+
+        'If My.Computer.Network.IsAvailable Then
+        '    If My.Computer.Network.Ping(urlIP) Then
+        '        My.Computer.Network.DownloadFile(url, TempPath & "latest.ver")
+        '    End If
+        'End If
+
+        Try
+            My.Computer.Network.DownloadFile(url, TempPath & "latest.ver")
+
+        Catch ex As Exception
+            Me.Invoke(IsUpdate, "rien", False, "Impossible de vérifier maj")
+            errorOccured = True
+        End Try
+        If Not errorOccured Then
+            If System.IO.File.Exists(TempPath & "latest.ver") Then
+                SiteVer = My.Computer.FileSystem.ReadAllText(TempPath & "latest.ver").Trim
+            Else
+                SiteVer = NFFver
+            End If
+
+            If Not SiteVer = NFFver Then
+                Me.Invoke(IsUpdate, SiteVer, False, "")
+            Else
+                Me.Invoke(IsUpdate, SiteVer, True, "")
+            End If
+        End If
+
     End Sub
 End Class
